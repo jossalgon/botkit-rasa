@@ -42,7 +42,7 @@ module.exports = config => {
 
     hears: (patterns, message) => {
       return patterns.some(pattern => {
-        if (message.intent.name === pattern) {
+        if (new RegExp(pattern).test(message.intent.name)) {
           debug('Rasa intent matched hear pattern', message.intent, pattern)
           return true
         }
