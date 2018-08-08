@@ -11,21 +11,22 @@ module.exports = config => {
   }
 
   var middleware = {
-    receive: (bot, message, next) => {
+    receive: (bot, message, next, text_to_translate) => {
       // is_echo: can be true for facebook bots when the echo webhook is subscribed
       // bot_id: keep an eye https://github.com/howdyai/botkit/pull/694
       // if bot_id is present, the message comes from another bot
-      if (!message.text || message.is_echo || message.bot_id) {
+      text_to_translate = (text_to_translate) ? text_to_translate : message.text;
+      if (!text_to_translate || message.is_echo || message.bot_id) {
         next()
         return
       }
 
-      debug('Sending message to Rasa', message.text)
+      debug('Sending message to Rasa', text_to_translate)
       const options = {
         method: 'POST',
         uri: `${config.rasa_uri}/parse`,
         body: {
-          q: message.text,
+          q: text_to_translate,
           project: `${config.rasa_project}`
         },
         json: true
